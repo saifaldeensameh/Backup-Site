@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'uploading_data',
     'accounts',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,7 @@ WSGI_APPLICATION = 'backend1.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Btech-backup-backend',
+        'NAME': 'Btech-backup',
         'USER':'postgres',
         'PASSWORD':'wowtesting1234567890',
         'HOST':'localhost',

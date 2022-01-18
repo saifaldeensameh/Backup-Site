@@ -1,45 +1,69 @@
 {% extends 'base.html' %}
-{% block title%} Upload Page {% endblock%}
 
 
     {%block head_scripts%}
-  <script>
-  $( function() {
-    $( "#dialog" ).dialog({
-      resizable: true,
-      height: "auto",
-      width: "auto",
-      modal: true,
+<!--  <script>-->
+<!--  $( function() {-->
+<!--    $( "#dialog" ).dialog({-->
+<!--      resizable: true,-->
+<!--      height: "auto",-->
+<!--      width: "auto",-->
+<!--      modal: true,-->
 
-    });
-  } );
-  </script>
+<!--    });-->
+<!--  } );-->
+<!--  </script>-->
     {% endblock %}
 
 
-
-{% block breadcrumb %}
-  <li class="breadcrumb-item active">Upload</li>
-{% endblock %}
-
 {% block content%}
-<form method="post" novalidate enctype="multipart/form-data" data-ajax="false">
-    {% csrf_token %}
-    {% include 'includes/form.html' %}
+<!--<form method="post" novalidate enctype="multipart/form-data" >-->
+<!--    {% csrf_token %}-->
+<!--    {% include 'includes/form.html' %}-->
 <!--    <button type="submit" name = 'Upload_Btn' class="btn btn-primary ">Upload</button>-->
-    <button type="submit"  name = 'Check_Files_Btn' class="btn btn-primary ">Check Files</button>
-    </form>
 
-{% if messages %}{% for message in messages %}
+<!--                  <div class="input-group mb-3">-->
+<!--                   <span class="input-group-text" style="background:#f24d18;color:white">SKU</span>-->
+<!--                    <input type="file" class = 'form-control' placeholder="Search" aria-label="Search" name="search" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search2" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search3" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search4" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search5" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search6" value="{{search}}" >-->
 
-<div id="dialog" title="Error in Sheet" >
-<!--    <span class="ui-icon ui-icon-alert " style="float:left; margin:12px 12px 20px 0;"></span>-->
+
+
+
+<!--                    <div class="input-group-append">-->
+<!--                      <button class="btn btn-outline-secondary" name = 'search_btn' type="submit">Search</button>-->
+<!--                    </div>-->
+
+<!--                  </div>-->
+<!--                           </form>-->
+
+{% if messages %}
+<div class="alert alert-danger" id="dialog" title="Error in Sheet" >
+{% for message in messages %}
 
   <p class="text-danger">{{message}}</p>
 
-    </div>
 {% endfor %}
+</div>
+
 {% endif %}
+
+<form method="post" novalidate enctype="multipart/form-data" data-ajax="false">
+              {% csrf_token %}
+              {% include 'includes/form.html' %}
+<!--              <button type="submit" class="btn btn-primary btn-block" name="check_btn">Check</button>-->
+              <button type="submit" class="btn btn-primary btn-block" name="upload_btn">Upload</button>
+<!--              <button type="submit" class="btn btn-primary btn-block" name="save_sku_btn">Save SKU</button>-->
+
+<!--            {% if button %}-->
+<!--                <button type="submit" class="btn btn-primary btn-block" name="search_btn2">Create an account</button>-->
+<!--            {%endif%}-->
+            </form>
+
 
 
 
