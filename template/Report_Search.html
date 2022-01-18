@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Upload successful{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item "><a href="{%url 'index'%}">Upload</a> </li>
+
+  <li class="breadcrumb-item active">Success</li>
+{% endblock %}
+
+{% block content %}
+    <form class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
+
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+
+    </form>
+
+  {%if articles%}
+  {% for article in articles %}
+
+    <p> {{article.SKU}} </p>
+    <p> {{article.Creatorid}} </p>
+    <p> {{article.Qualityid}} </p>
+    <p> {{article.isRejected}} </p>
+    <p> {{article.Sheetid.ticketname}} </p>
+    <p> {{article.Sheetid.batchNumber}} </p>
+    <p> {{article.Sheetid.Majentoid}} </p>
+    <p> {{article.Sheetid.Uploaderid}} </p>
+    <p> {{article.Sheetid.MajentoDate}} </p>
+    <p> {{article.Sheetid.UploadedDate}} </p>
+
+<!--    <p> {{article.Creatorid}} </p>-->
+
+<!--    <p> {{article.Creatorid}} </p>-->
+
+
+    {% endfor %}
+  {% for trans in translation %}
+
+     <p> {{trans.Creatorid}} </p>
+    <p> {{trans.Qualityid}} </p>
+    <p> {{trans.isRejected}} </p>
+    {% endfor %}
+{%endif%}
+{% endblock %}

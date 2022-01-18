@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title%} Upload Page {% endblock%}
+
+
+    {%block head_scripts%}
+  <script>
+  $( function() {
+    $( "#dialog" ).dialog({
+      resizable: true,
+      height: "auto",
+      width: "auto",
+      modal: true,
+
+    });
+  } );
+  </script>
+    {% endblock %}
+
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Upload</li>
+{% endblock %}
+
+{% block content%}
+<form method="post" novalidate enctype="multipart/form-data" data-ajax="false">
+    {% csrf_token %}
+    {% include 'includes/form.html' %}
+<!--    <button type="submit" name = 'Upload_Btn' class="btn btn-primary ">Upload</button>-->
+    <button type="submit"  name = 'Check_Files_Btn' class="btn btn-primary ">Check Files</button>
+    </form>
+
+{% if messages %}{% for message in messages %}
+
+<div id="dialog" title="Error in Sheet" >
+<!--    <span class="ui-icon ui-icon-alert " style="float:left; margin:12px 12px 20px 0;"></span>-->
+
+  <p class="text-danger">{{message}}</p>
+
+    </div>
+{% endfor %}
+{% endif %}
+
+
+
+{%endblock%}
+

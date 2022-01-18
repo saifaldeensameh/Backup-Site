@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Upload successful{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item "><a href="{%url 'index'%}">Upload</a> </li>
+
+  <li class="breadcrumb-item active">Success</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-success" role="alert">
+    <strong>Success!</strong> Uploaded Successfully!
+  </div>
+  <a href="{% url 'index' %}" class="btn btn-secondary">Return to Upload page</a>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Upload successful{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item "><a href="{%url 'index'%}">Upload</a> </li>
+
+  <li class="breadcrumb-item active">Success</li>
+{% endblock %}
+
+{% block content %}
+    <form class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" type="number" placeholder="Ticket Numbet" aria-label="Search" name="search" >
+    <input class="form-control mr-sm-2" type="number" placeholder="Batch Number" aria-label="Search2" name="batch_search" >
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+
+    </form>
+
+{%if articles%}
+  {% for article in articles %}
+    <p> {{article.ticketname}} </p>
+    <p> {{article.batchNumber}} </p>
+    <p> {{article.Majentoid}} </p>
+    <p> {{article.Uploaderid}} </p>
+    <p> {{article.MajentoDate}} </p>
+    <p> {{article.UploadedDate}} </p>
+<!--    <p> {{article.ticketname.SKU}} </p>-->
+    {% endfor %}
+
+
+    <p>{{translation}}</p>
+
+    {% endif %}
+
+{% endblock %}
