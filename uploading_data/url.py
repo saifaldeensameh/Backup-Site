@@ -18,9 +18,9 @@ urlpatterns = [
     path('upload_sku_api/', views.Upload_SKU_api.as_view(), name='upload_sku_api'),
     path('edit_sheet_api/<int:id>/',views.Edit_Sheet_api.as_view(), name='edit_sheet_api'),
     path('edit_sku_api/<slug:SKU>/',views.Edit_SKU_api.as_view(), name='edit_sku_api'),
-    path('upload_api/', views.Upload_api.as_view(), name='index'),
-    path('search_sku_api/', views.search_skus_api, name='search_sku'),
-    path('search_batch_api/', views.search_ticket_batch_api, name='search_batch'),
+    # path('upload_api/', views.Upload_Sheet_api.as_view(), name='index'),
+    path('search_sku_api/', views.search_skus_api, name='search_sku_api'),
+    path('search_batch_api/', views.search_ticket_batch_api, name='search_batch_api'),
 
     # path('signup',views.signup,name='signup'),
 ]
