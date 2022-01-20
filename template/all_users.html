@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{%block export%}
+{%endblock%}
+
+{% block content %}
+<!--<p>haaaaaaaaaaaaaaaaa</p>-->
+<form class="form-inline my-2 my-lg-0" id="search_batch_form">
+                  <div class="input-group mb-3">
+<!--        <span class="input-group-text" style="background:#f24d18;color:white">Ticket</span>-->
+<!--        <input class="form-control " type="number" placeholder="Ticket Number" aria-label="Search" name="search" value="{{search}}">-->
+<!--        <span class="input-group-text " style="background:#f24d18;color:white">Batch</span>-->
+<!--        <input class="form-control " type="number" placeholder="Batch Number" aria-label="Search2" name="batch_search" value="{{batch_search}}">-->
+<!--          {% csrf_token %}-->
+              {% include 'includes/form.html' %}
+                      <button class="btn btn-outline-secondary" name = 'search_btn' type="submit">
+         <i class="    mdi mdi-magnify btn-icon-append"></i>
+         Search
+         </button>
+                  </div>
+</form>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th>Username</th>
+        <th>Creation</th>
+        <th>Quality</th>
+        <th>Rejection</th>
+        <th>Rejection Percentage</th>
+<!--        <th>Uploader Date</th>-->
+    </tr>
+    </thead>
+    <tbody>
+    {% for person in persons%}
+    <tr>
+        <td>{{person.user}}</td>
+        <td>{{person.create}}</td>
+        <td>{{person.quality}} </td>
+        <td>{{person.rejection}}</td>
+        <td>{{person.percentage}}%</td>
+<!--        <small class="text-muted d-block">{{board.description}}</small>-->
+<!--        </td>-->
+<!--        <td>{{sheet.batchNumber}}</td>-->
+<!--        <td>{{sheet.Majentoid.username}}</td>-->
+<!--        <td>{{sheet.MajentoDate.date}}</td>-->
+<!--        <td>{{sheet.Uploaderid.username}}</td>-->
+<!--        <td>{{sheet.UploadedDate.date}}</td>-->
+    </tr>
+    {%endfor%}
+
+    </tbody>
+</table>
+
+{% endblock %}
