@@ -1,12 +1,15 @@
 import csv
+import json
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.views.generic import UpdateView
 from rest_framework import generics
+from django.core.files import File
 
 from .models import Sheet
 from django.contrib.auth.decorators import login_required
-from .forms import NewSheetForm
+from .forms import NewSheetForm,UserandSheet
 from django.contrib.auth.models import User
 from .models import Data_Field
 from django.contrib.auth import login as auth_login
@@ -255,6 +258,96 @@ def report_search(request):
 
     return render(request, 'Search_Sku.html', {'articles': articles, 'search_term': search_term,'translation':translation})
 
+
+def all_sheets(request):
+    if request.method == 'GET' and 'search_btn' in request.GET:
+        if 'search' in request.GET:
+            search_term_ticket = request.GET['search']
+            search_term_batch = request.GET['batch_search']
+            try:
+                x = int(search_term_ticket)
+                x = int(search_term_batch)
+                sheets = Sheet.objects.all().filter(ticketname=search_term_ticket, batchNumber=search_term_batch)
+            except:
+                sheets = []
+            return render(request, 'all_sheets.html', {'sheets': sheets})
+    sheets = Sheet.objects.all().order_by('-MajentoDate')
+    return render(request,'all_sheets.html',{'sheets':sheets})
+
+def all_user(request):
+        x=[]
+
+        form = UserandSheet()
+        chosenusers = False
+        datalist = []
+
+        # fromdate= request.GET['from_date']
+        # todate = request.GET['to_date'].
+        searchfrom=''
+        searchto=''
+        searchname=''
+        if  'from_date' not in request.GET or request.GET['from_date']=='':
+
+            fromdate = '1900-01-01T00:00'
+        else:
+            fromdate = request.GET['from_date']
+            searchfrom = request.GET['from_date']
+
+        if 'to_date' not in request.GET or request.GET['to_date'] == '':
+            todate = '2500-01-01T00:00'
+        else:
+            todate = request.GET['to_date']
+            searchto = request.GET['to_date']
+
+        if 'majento_id' in request.GET:
+            form = UserandSheet(request.GET)
+            # x =form.save(commit=False)
+            searchname=request.GET['majento_id']
+            chosenusers=True
+            for i in request.GET.getlist('majento_id'):
+                x .append(User.objects.all().filter(id=i))
+
+        if chosenusers:
+            users=x
+        else:
+            users = User.objects.all()
+
+
+        for user in users:
+            if chosenusers:
+                user = user[0]
+            creation = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
+            quality = Data_Field.objects.all().filter(Qualityid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
+            rejection = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate,isRejected=True).count()
+            try:
+                rejection_percentage = (rejection/quality)*100
+            except:
+                rejection_percentage = 0
+            datalist.append( {'user':str(user),'create':str(creation),'quality':str(quality),
+                                  'rejection':str(rejection),'percentage':str(rejection_percentage)})
+
+
+        return render(request, 'all_users.html', {'persons': datalist,'form':form,'searchname':searchname,'searchfrom':searchfrom,'searchto':searchto})
+#############################################################################
+# def edit_sheet(request,sheetid):
+#     sheets = get_object_or_404(Sheet, pk=sheetid)
+#     print(sheets)
+#     return render(request, 'edit_sheet.html', {'sheets': sheets})
+
+
+class EditSheet(UpdateView):
+    model = Sheet
+    fields = ('sheeturl',)
+    template_name = 'edit_sheet.html'
+    pk_url_kwarg = 'sheetid'
+    context_object_name = 'sheet'
+
+    def form_valid(self, form):
+        sheet=form.save(commit=False)
+        sheet.save()
+        return redirect('all_sheets')
+
+
 #backend
 
 def checking_found_api(request):
@@ -392,8 +485,6 @@ def search_ticket_batch_api(request):
         f={'Ticket_Number':article.ticketname,'Batch_Number':article.batchNumber,'Majento_Name':majname,
            'Majento_Date':article.MajentoDate.date(),'Majento_Time':article.MajentoDate.time(),'Uploader_Name':upname,'Uploaded_Date':article.UploadedDate.date(),'Uploaded_Time':article.UploadedDate.time(),
            'SKU_Count': int(translation)}
-
-
     return JsonResponse(f)
 
 def export_csv_batch_api(request):
@@ -443,9 +534,24 @@ def export_csv_sku_api(request):
         return response
     return JsonResponse({'Not Found':'Sorry'})
 
-class Upload_api(generics.CreateAPIView):
+class Upload_Sheet_api(generics.CreateAPIView):
     queryset = Sheet.objects.all()
     serializer_class = Sheet_Serializer
-    # lookup_field = 'SKU'
-    # lookup_field = 'id'
 
+class Edit_Sheet_api(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Sheet.objects.all()
+    serializer_class = Sheet_Serializer
+    lookup_field = "id"
+
+
+class Upload_SKU_api(generics.CreateAPIView):
+    queryset = Data_Field.objects.all()
+    serializer_class = Data_Field_Serializer
+
+
+
+class Edit_SKU_api(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Data_Field.objects.all()
+    serializer_class = Data_Field_Serializer
+    lookup_field = 'SKU'
+    # lookup_field = 'id'

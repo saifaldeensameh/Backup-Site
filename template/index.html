@@ -51,21 +51,14 @@
 </div>
 
 {% endif %}
-
-<form method="post" novalidate enctype="multipart/form-data" data-ajax="false">
+<div class="card">
+    <div class="card-body">
+        <form method="post" class="row g-3 needs-validation" novalidate enctype="multipart/form-data" data-ajax="false">
               {% csrf_token %}
               {% include 'includes/form.html' %}
-<!--              <button type="submit" class="btn btn-primary btn-block" name="check_btn">Check</button>-->
-              <button type="submit" class="btn btn-primary btn-block" name="upload_btn">Upload</button>
-<!--              <button type="submit" class="btn btn-primary btn-block" name="save_sku_btn">Save SKU</button>-->
-
-<!--            {% if button %}-->
-<!--                <button type="submit" class="btn btn-primary btn-block" name="search_btn2">Create an account</button>-->
-<!--            {%endif%}-->
-            </form>
-
-
-
-
+              <button type="submit" class="btn btn-block" style="background:#f24d18;color:white" name="upload_btn">Upload</button>
+      </form>
+    </div>
+</div>
 {%endblock%}
 

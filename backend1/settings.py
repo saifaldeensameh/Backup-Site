@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'uploading_data',
     'accounts',
     'rest_framework',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

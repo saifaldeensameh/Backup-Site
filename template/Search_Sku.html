@@ -37,34 +37,20 @@
 
                   </div>
                            </form>
-
-
-<!--                </p>-->
                 <div class="table-responsive">
 
 {%if articles%}
   <table class="table table-striped ">
-<!--  <thead>-->
-<!--    <tr>-->
-<!--      <th scope="col">Key</th>-->
-<!--      <th scope="col">Value</th>-->
-<!--      </tr>-->
-<!--  </thead>-->
       <tbody>
 {% for article,y in articles.items %}
     <tr>
-      <td>{{article}}</td>
+      <th>{{article}}</th>
       <td>{{y}}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endif %}
-
-
-
-
-
                 </div>
               </div>
             </div>
