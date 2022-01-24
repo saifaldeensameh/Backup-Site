@@ -10,7 +10,8 @@ urlpatterns = [
     path('edit/',views.all_sheets,name='all_sheets'),
     path('edit/<int:sheetid>/',views.EditSheet.as_view(),name='edit_sheet'),
     path('report/', views.all_user, name='all_users'),
-
+    path('user_profile/',views.user_profile,name='user_profile'),
+    path('dashboard/', views.dashboard, name='dashboard'),
 
     path('search_sku_api/', views.search_skus_api, name='search_sku_api'),
     path('search_batch_api/', views.search_ticket_batch_api, name='search_batch_api'),

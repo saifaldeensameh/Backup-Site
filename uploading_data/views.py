@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import UpdateView
 from rest_framework import generics
 from django.core.files import File
-
+import datetime
 from .models import Sheet
 from django.contrib.auth.decorators import login_required
 from .forms import NewSheetForm,UserandSheet
@@ -21,25 +21,53 @@ import pandas as pd
 from django.contrib import messages as alertmessage
 
 #fullstack project
+def ticket_batch_exist(ticketname,batchnumber):
+    return Sheet.objects.filter(ticketname=ticketname, batchNumber=batchnumber).exists()
+
+def isnotcsv(sheeturl):
+    try:
+        df = pd.read_csv(sheeturl)
+        return False,''
+    except:
+        return True,"File isn't csv"
+
 @login_required
 def Upload(request):
-    form = NewSheetForm()
-    if request.method == 'POST' and 'upload_btn' in request.POST:
-        form = NewSheetForm(request.POST, request.FILES)
-        if form.is_valid():
-            sheet = form.save(commit=False)
-            submit,message = checking_found(sheet.sheeturl)
-            if submit:
-                # sheetsave = form.save(commit=False)
-                sheet.Uploaderid = request.user
-                sheet.save()
-                saving_sku(sheet.sheeturl, sheet.ticketname, sheet.batchNumber)
-                return redirect('upload_done')
-            else:
-                messages = message.split('\n')
+    # form = NewSheetForm()
+    data = User.objects.all()
 
-            return render(request, 'index.html', {'form': form,'messages':messages})
-    return render(request, 'index.html', {'form': form})
+    if request.method == 'POST' and 'upload_btn' in request.POST:
+        date = (request.POST['MajentoDate'].split('/'))
+        date = '-'.join(date)
+        print(date)
+        sheeturl =(request.FILES.getlist('sheeturl'))[0]
+        ticket_exist_status=ticket_batch_exist(request.POST['ticketname'],request.POST['batchNumber'])
+        if ticket_exist_status:
+            return render(request, 'index.html', {'data': data, 'messages': ['The Ticket and Batch Already Exists']})
+        filetype_error,filetype_error_message =isnotcsv(sheeturl)
+        if filetype_error:
+            return render(request,'index.html',{'data':date,'messages':[filetype_error_message]})
+        submit,message = checking_found(sheeturl)
+        if submit:
+            sheet = Sheet()
+            sheet.sheeturl = sheeturl
+            sheet.ticketname= request.POST['ticketname']
+            sheet.batchNumber = request.POST['batchNumber']
+            # print(request.POST['Majentoid'])
+            sheet.Majentoid = get_object_or_404(User, username=str(request.POST['Majentoid']))
+            date = (request.POST['MajentoDate'].split('/'))
+            date = '-'.join(date)
+            sheet.MajentoDate = date
+            print(date)
+            sheet.Uploaderid = request.user
+            sheet.save()
+            saving_sku(sheet.sheeturl, sheet.ticketname, sheet.batchNumber)
+            return redirect('upload_done')
+        else:
+            messages = message.split('\n')
+
+        return render(request, 'index.html', {'data':data,'messages':messages})
+    return render(request, 'index.html', {'data':data})
 
 #checking for errors in the fullstack project
 def checking_found(file):
@@ -170,7 +198,7 @@ def search_skus(request):
             search_term =search_term.split('_ar')
             search_term =search_term[0]
             sku_data = Data_Field.objects.all().filter(SKU=search_term)
-            data = search_term + '_ar'
+            # data = search_term + '_ar'
             # sku_data_ar = Data_Field.objects.all().filter(SKU=data)
         data = {}
         for item in sku_data:
@@ -183,7 +211,7 @@ def search_skus(request):
             writer.writerow(df.columns.tolist())
             for item in df.values.tolist():
                 writer.writerow(item)
-            response['Content-Disposition'] = 'attachment; filename="members_sku.csv"'
+            response['Content-Disposition'] = 'attachment; filename=Ticket-'+str(sheetid.ticketname)+'-Batch-'+str(sheetid.batchNumber)+'.csv'
             return response
         return render(request, 'Search_Sku.html',{'messages':['SKU Not Found']})
 
@@ -232,31 +260,12 @@ def search_ticket_batch(request):
             writer.writerow(df.columns.tolist())
             for item in df.values.tolist():
                 writer.writerow(item)
-            response['Content-Disposition'] = 'attachment; filename="members.csv"'
+            response['Content-Disposition'] = 'attachment; filename=Ticket-'+str(search_term_ticket)+'-Batch-'+str(search_term_batch)+'.csv'
             return response
         return render(request, 'Search_Ticket_Batch.html',{'messages':['SKU Not Found']})
 
 
     return render(request, 'Search_Ticket_Batch.html')
-
-
-def report_search(request):
-    search_term = ''
-    translation =''
-    articles =''
-    if 'search' in request.GET:
-        search_term = request.GET['search']
-        print(search_term)
-        if str(search_term) =='all':
-            articles = Data_Field.objects.all()
-        else:
-            articles = Data_Field.objects.all().filter(SKU=search_term)
-        data = search_term+'_ar'
-        translation = Data_Field.objects.all().filter(SKU=data)
-
-
-
-    return render(request, 'Search_Sku.html', {'articles': articles, 'search_term': search_term,'translation':translation})
 
 
 def all_sheets(request):
@@ -274,65 +283,160 @@ def all_sheets(request):
     sheets = Sheet.objects.all().order_by('-MajentoDate')
     return render(request,'all_sheets.html',{'sheets':sheets})
 
-def all_user(request):
+def all_user2(request):
         x=[]
-
-        form = UserandSheet()
         chosenusers = False
         datalist = []
-
-        # fromdate= request.GET['from_date']
-        # todate = request.GET['to_date'].
+        data= User.objects.all()
         searchfrom=''
         searchto=''
         searchname=''
-        if  'from_date' not in request.GET or request.GET['from_date']=='':
+        print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',request.GET)
+        if 'search_btn' in request.GET:
+            if  'from_date' not in request.GET or request.GET['from_date']=='':
 
-            fromdate = '1900-01-01T00:00'
-        else:
-            fromdate = request.GET['from_date']
-            searchfrom = request.GET['from_date']
+                fromdate = '2000-01-01T00:00'
+            else:
+                fromdate = '-'.join(request.GET['from_date'].split('/'))
+                searchfrom = '-'.join(request.GET['from_date'].split('/'))
 
-        if 'to_date' not in request.GET or request.GET['to_date'] == '':
-            todate = '2500-01-01T00:00'
-        else:
-            todate = request.GET['to_date']
-            searchto = request.GET['to_date']
+            if 'to_date' not in request.GET or request.GET['to_date'] == '':
+                todate = '2050-01-01T00:00'
+            else:
+                todate = '-'.join(request.GET['to_date'].split('/'))
+                searchto = '-'.join(request.GET['to_date'].split('/'))
 
-        if 'majento_id' in request.GET:
-            form = UserandSheet(request.GET)
-            # x =form.save(commit=False)
-            searchname=request.GET['majento_id']
-            chosenusers=True
-            for i in request.GET.getlist('majento_id'):
-                x .append(User.objects.all().filter(id=i))
+            if 'majento_id' in request.GET:
+                # form = UserandSheet(request.GET)
+                # x =form.save(commit=False)
+                searchname=request.GET.getlist('majento_id')
+                # print(searchname)
+                chosenusers=True
+                for i in request.GET.getlist('majento_id'):
+                    x .append(User.objects.all().filter(username=i))
 
-        if chosenusers:
-            users=x
+            if chosenusers:
+                users=x
+            else:
+                users = User.objects.all()
+
+
+            for user in users:
+                if chosenusers:
+                    user = user[0]
+                creation = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
+                quality = Data_Field.objects.all().filter(Qualityid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
+                rejection = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate,isRejected=True).count()
+                try:
+                    rejection_percentage = round((rejection / quality) * 100,2)
+
+                except:
+                    rejection_percentage = 0
+                datalist.append( {'user':str(user),'create':str(creation),'quality':str(quality),
+                                      'rejection':str(rejection),'percentage':str(rejection_percentage)})
+
+
+            return render(request, 'all_users.html', {'persons': datalist,'data':data,'searchname':searchname,'searchfrom':searchfrom,'searchto':searchto})
+        elif 'export_btn' in request.GET:
+            response = HttpResponse(content_type='text/csv')
+            writer = csv.writer(response)
+            writer.writerow(['user','create','quality','rejection','percentage'])
+            print('\n\n\n\n\n\n\n\n\n\n\n\n')
+            f=0
+            for item in datalist:
+                print(f)
+                f+=1
+                print(item)
+                print(item['user'])
+                writer.writerow([item['user'],item['create'],item['quality'],item['rejection'],item['percentage']])
+            response['Content-Disposition'] = 'attachment; filename=Report-'+str(datetime.date.today())+'.csv'
+            # print(datalist)
+            return response
         else:
             users = User.objects.all()
 
+            for user in users:
+                if chosenusers:
+                    user = user[0]
+                creation = Data_Field.objects.all().filter(Creatorid=user).count()
+                quality = Data_Field.objects.all().filter(Qualityid=user).count()
+                rejection = Data_Field.objects.all().filter(Creatorid=user, isRejected=True).count()
+                try:
+                    rejection_percentage = (rejection / quality) * 100
+                except:
+                    rejection_percentage = 0
+                datalist.append({'user': str(user), 'create': str(creation), 'quality': str(quality),
+                                 'rejection': str(rejection), 'percentage': str(rejection_percentage)})
+
+            return render(request, 'all_users.html',{'persons': datalist,'data':data,'searchname':searchname,'searchfrom':searchfrom,'searchto':searchto})
+
+
+def all_user(request):
+    x = []
+    chosenusers = False
+    datalist = []
+    data = User.objects.all()
+    searchfrom = searchto =  searchname = ''
+    if request.method == 'GET':
+        if 'from_date' not in request.GET or request.GET['from_date'] == '':
+            fromdate = '2000-01-01T00:00'
+        else:
+            fromdate = '-'.join(request.GET['from_date'].split('/'))
+            searchfrom = '-'.join(request.GET['from_date'].split('/'))
+
+        if 'to_date' not in request.GET or request.GET['to_date'] == '':
+            todate = '2050-01-01T00:00'
+        else:
+            todate = '-'.join(request.GET['to_date'].split('/'))
+            searchto = '-'.join(request.GET['to_date'].split('/'))
+
+        if 'majento_id' in request.GET:
+            # form = UserandSheet(request.GET)
+            # x =form.save(commit=False)
+            searchname = request.GET.getlist('majento_id')
+            # print(searchname)
+            chosenusers = True
+            for i in request.GET.getlist('majento_id'):
+                x.append(User.objects.all().filter(username=i))
+
+        if chosenusers:
+            users = x
+        else:
+            users = User.objects.all()
 
         for user in users:
             if chosenusers:
                 user = user[0]
-            creation = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
-            quality = Data_Field.objects.all().filter(Qualityid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
-            rejection = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate,isRejected=True).count()
+            creation = Data_Field.objects.all().filter(Creatorid=user, Sheetid__MajentoDate__gte=fromdate,
+                                                       Sheetid__MajentoDate__lte=todate).count()
+            quality = Data_Field.objects.all().filter(Qualityid=user, Sheetid__MajentoDate__gte=fromdate,
+                                                      Sheetid__MajentoDate__lte=todate).count()
+            rejection = Data_Field.objects.all().filter(Creatorid=user, Sheetid__MajentoDate__gte=fromdate,
+                                                        Sheetid__MajentoDate__lte=todate, isRejected=True).count()
             try:
-                rejection_percentage = (rejection/quality)*100
+                rejection_percentage = round((rejection / quality) * 100, 2)
+
             except:
                 rejection_percentage = 0
-            datalist.append( {'user':str(user),'create':str(creation),'quality':str(quality),
-                                  'rejection':str(rejection),'percentage':str(rejection_percentage)})
+            datalist.append({'user': str(user), 'create': str(creation), 'quality': str(quality),
+                             'rejection': str(rejection), 'percentage': str(rejection_percentage)})
 
-
-        return render(request, 'all_users.html', {'persons': datalist,'form':form,'searchname':searchname,'searchfrom':searchfrom,'searchto':searchto})
-#############################################################################
-# def edit_sheet(request,sheetid):
-#     sheets = get_object_or_404(Sheet, pk=sheetid)
-#     print(sheets)
-#     return render(request, 'edit_sheet.html', {'sheets': sheets})
+        if 'search_btn' in request.GET:
+            return render(request, 'all_users.html',
+                      {'persons': datalist, 'data': data, 'searchname': searchname, 'searchfrom': searchfrom,
+                       'searchto': searchto})
+        elif 'export_btn' in request.GET:
+            response = HttpResponse(content_type='text/csv')
+            writer = csv.writer(response)
+            writer.writerow(['user', 'create', 'quality', 'rejection', 'percentage'])
+            print('\n\n\n\n\n\n\n\n\n\n\n\n')
+            for item in datalist:
+                writer.writerow([item['user'], item['create'], item['quality'], item['rejection'], item['percentage']])
+            response['Content-Disposition'] = 'attachment; filename=Report-' + str(datetime.date.today()) + '.csv'
+            return response
+        else:  return render(request, 'all_users.html',
+                      {'persons': datalist, 'data': data, 'searchname': searchname, 'searchfrom': searchfrom,
+                       'searchto': searchto})
 
 
 class EditSheet(UpdateView):
@@ -347,6 +451,48 @@ class EditSheet(UpdateView):
         sheet.save()
         return redirect('all_sheets')
 
+def user_profile(request):
+
+    return render(request,'user_profile.html')
+# @login_required
+# class user_profile(UpdateView):
+#     model = User
+#     fields = ('username','first_name','last_name')
+#     template_name = 'user_profile.html'
+#     pk_url_kwarg = 'id'
+#     context_object_name = 'user'
+#     def form_valid(self, form):
+#         user=form.save(commit=False)
+#         user.save()
+#         return redirect('index')
+#
+def dashboard(request):
+    user = request.user
+    creation = Data_Field.objects.all().filter(Creatorid=user).count()
+    quality = Data_Field.objects.all().filter(Qualityid=user).count()
+    rejection = Data_Field.objects.all().filter(Creatorid=user, isRejected=True).count()
+    try:
+        rejection_percentage = round((rejection / quality) * 100,2)
+    except:
+        rejection_percentage = 0
+
+
+
+    return render(request,'dashboard.html',{'creation':creation,'quality':quality,'rejection':rejection,'rejection_percentage':rejection_percentage})
+
+# class user_profile(UpdateView):
+#     form_class = User
+#     model = User
+#     template_name = 'user_profile.html'
+#
+#     def get(self, request, **kwargs):
+#         return self.request.user
+#
+#     def form_valid(self, form):
+#         self.object = form.save(commit=False)
+#         self.object.user = self.request.user
+#         self.object.save()
+#         return render('index')
 
 #backend
 
@@ -489,6 +635,8 @@ def search_ticket_batch_api(request):
 
 def export_csv_batch_api(request):
     articles =[]
+    search_term_ticket=0
+    search_term_batch=0
     if 'search' in request.GET:
         search_term_ticket = request.GET['search']
         search_term_batch = request.GET['batch_search']
@@ -503,7 +651,7 @@ def export_csv_batch_api(request):
         writer.writerow(df.columns.tolist())
         for item in df.values.tolist():
             writer.writerow(item)
-        response['Content-Disposition'] = 'attachment; filename="members.csv"'
+        response['Content-Disposition'] = 'attachment; filename=Ticket-'+str(search_term_ticket)+'-Batch-'+str(search_term_batch)+'.csv'
         return response
     return JsonResponse({'Not Found':'Sorry'})
 
@@ -530,7 +678,7 @@ def export_csv_sku_api(request):
         writer.writerow(df.columns.tolist())
         for item in df.values.tolist():
             writer.writerow(item)
-        response['Content-Disposition'] = 'attachment; filename="members_sku.csv"'
+        response['Content-Disposition'] = 'attachment; filename=Ticket-'+str(sheetid.ticketname)+'-Batch-'+str(sheetid.batchNumber)+'.csv'
         return response
     return JsonResponse({'Not Found':'Sorry'})
 

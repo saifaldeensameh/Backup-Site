@@ -26,7 +26,7 @@
                 <h4 class="card-title" style="color: #f24d18;">Search Ticket & Batch</h4>
 
     <form class="form-inline my-2 my-lg-0" id="search_batch_form">
-                  <div class="input-group mb-3">
+                  <div class="input-group col-lg-12" style="margin:1% 0">
         <span class="input-group-text" style="background:#f24d18;color:white">Ticket</span>
         <input class="form-control " type="number" placeholder="Ticket Number" aria-label="Search" name="search" value="{{search}}">
         <span class="input-group-text " style="background:#f24d18;color:white">Batch</span>
@@ -36,27 +36,16 @@
          Search
          </button>
     </div>
-
-<!--    <button class="btn btn-outline-success my-2 my-sm-0" name = 'export_btn' type="submit">Export</button>-->
-
-
     </form>
   <div class="table-responsive">
 {%if articles%}
   <table class="table table-striped ">
-<!--  <thead>-->
-<!--    <tr>-->
-<!--      <th scope="col">Key</th>-->
-<!--      <th scope="col">Value</th>-->
-<!--      </tr>-->
-<!--  </thead>-->
       <tbody>
 {% for article,y in articles.items %}
     <tr>
       <th>{{article}}</th>
       <td>{{y}}</td>
     </tr>
-
     {% endfor %}
   </tbody>
 </table>
@@ -66,22 +55,6 @@
             </div>
  </div>
 {% endblock %}
-
-
-
-<!--                <p class="card-description">-->
-                  <!-- Add class <code>.table-striped</code> -->
-                  <!-- <input type="search" /> -->
-
-                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
-                    <div class="input-group-append">
-                      <button  name = 'search_btn' type="submit">Search</button>
-                    </div>
-
-
-<!--                </p>-->
-
-
 
 
 
