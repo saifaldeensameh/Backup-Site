@@ -1,0 +1,19 @@
+ul.multiselect-container.dropdown-menu {
+    width: 70%;
+    clear: both;
+    position: absolute;
+    height:350px;
+    overflow-y:auto;
+    overflow-x:auto;
+}
+
+ul.multiselect-container.dropdown-menu li {
+
+    display: inline-block;
+    height:30;
+}
+
+.form-inline label {
+    justify-content: left;
+    padding: 0 25px;
+}
