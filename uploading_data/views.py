@@ -24,12 +24,12 @@ from django.contrib import messages as alertmessage
 def ticket_batch_exist(ticketname,batchnumber):
     return Sheet.objects.filter(ticketname=ticketname, batchNumber=batchnumber).exists()
 
-def isnotcsv(sheeturl):
-    try:
-        df = pd.read_csv(sheeturl)
-        return False,''
-    except:
-        return True,"File isn't csv"
+# def isnotcsv(sheeturl):
+#     try:
+#         df = pd.read_csv(sheeturl)
+#         return False,''
+#     except:
+#         return True,"File isn't csv"
 
 @login_required
 def Upload(request):
@@ -44,9 +44,10 @@ def Upload(request):
         ticket_exist_status=ticket_batch_exist(request.POST['ticketname'],request.POST['batchNumber'])
         if ticket_exist_status:
             return render(request, 'index.html', {'data': data, 'messages': ['The Ticket and Batch Already Exists']})
-        filetype_error,filetype_error_message =isnotcsv(sheeturl)
-        if filetype_error:
-            return render(request,'index.html',{'data':date,'messages':[filetype_error_message]})
+        # filetype_error,filetype_error_message =isnotcsv(sheeturl)
+        # filetype_error=False
+        # if filetype_error:
+        #     return render(request,'index.html',{'data':date,'messages':[filetype_error_message]})
         submit,message = checking_found(sheeturl)
         if submit:
             sheet = Sheet()
@@ -71,16 +72,31 @@ def Upload(request):
 
 #checking for errors in the fullstack project
 def checking_found(file):
-    sku_dataframe = pd.read_csv(file)
-    arr = sku_dataframe[
-        ['sku', 'store_view_code', 'creatorid', 'qualityid', 'isrejected']].values.tolist()
+    # print(file)
+    try:
+        sku_dataframe = pd.read_csv(file)
+    except:
+        return False,'Please Enter CSV File'
+    try:
+        arr = sku_dataframe[
+            ['sku', 'store_view_code', 'creatorid', 'qualityid', 'r_id']].values.tolist()
+    except:
+        return False,"Check ['sku', 'store_view_code', 'creatorid', 'qualityid', 'r_id'] headers are Found"
+
     skufoundlist, skunanlist, creatornotfoundlist, qualitynotfoundlist, isrejectednotfoundlist = ([] for _ in range(5))
     skufound = skunan = creatornotfound = qualitynotfound = isrejectednotfound = False
     duplication_in_same_file = sku_dataframe[['sku', 'store_view_code']].duplicated().any()
+    num_of_arabic = sku_dataframe['store_view_code'].value_counts()
+    if len(num_of_arabic.keys()) != 1 or num_of_arabic.keys()[0] != 'ar' :
+        print(len(num_of_arabic.keys()),num_of_arabic.keys()[0])
+        return False,'The store_view_code Should be "ar" or blank'
+    print(len(num_of_arabic.keys()))
+    # store_view_checker
     for item in range(len(arr)):
         # check the existing sku
         try:
             sku = arr[item][0]
+            print('ffffffffffffffffffffffffffffffffffffffffff',arr[item][1],type(arr[item][1]))
             if str(arr[item][1]) == 'ar':
                 sku += '_ar'
 
@@ -136,7 +152,7 @@ def checking_found(file):
         message += '\n'+'Qualityid Not Found in row ' + '/'.join(qualitynotfoundlist)
         submitbool = False
     if isrejectednotfound:
-        message += '\n'+'Seif Value should be either 1 or 0 in row ' + '/'.join(isrejectednotfoundlist)
+        message += '\n'+'r_id Value should be either 1 or 0 in row ' + '/'.join(isrejectednotfoundlist)
         submitbool = False
 
     return submitbool,message
@@ -144,7 +160,7 @@ def checking_found(file):
 #saving all the skus in the file
 def saving_sku(file, ticketname, batchnumber):
     sku_dataframe = pd.read_csv(file)
-    sku_dataframe = sku_dataframe[['sku', 'store_view_code', 'creatorid', 'qualityid', 'isrejected']].values.tolist()
+    sku_dataframe = sku_dataframe[['sku', 'store_view_code', 'creatorid', 'qualityid', 'r_id']].values.tolist()
     for item in sku_dataframe:
         sku = item[0]
         if str(item[1]) == 'ar':
@@ -153,7 +169,7 @@ def saving_sku(file, ticketname, batchnumber):
         data.SKU = sku
         data.Creatorid = get_object_or_404(User, username=item[2])
         data.Qualityid = get_object_or_404(User, username=item[3])
-        data.isRejected = item[4]
+        data.isRejected = bool(item[4])
         data.Sheetid = get_object_or_404(Sheet, ticketname=ticketname, batchNumber=batchnumber)
         data.save()
 
@@ -190,9 +206,11 @@ def search_skus(request):
                     'Uploaded_Time': str(sheetid.UploadedDate.time()), }
         # return JsonResponse(data)
 
-
+        if len(sku_data)==0:
+            return render(request, 'Search_Sku.html', {'messages':['SKU Not Found'],'search': search_term, 'articles': data})
         return render(request, 'Search_Sku.html', {'search': search_term, 'articles': data})
     elif request.method == 'GET' and 'export_btn' in request.GET:
+        search_term =''
         if 'search' in request.GET:
             search_term = request.GET['search']
             search_term =search_term.split('_ar')
@@ -213,7 +231,7 @@ def search_skus(request):
                 writer.writerow(item)
             response['Content-Disposition'] = 'attachment; filename=Ticket-'+str(sheetid.ticketname)+'-Batch-'+str(sheetid.batchNumber)+'.csv'
             return response
-        return render(request, 'Search_Sku.html',{'messages':['SKU Not Found']})
+        return render(request, 'Search_Sku.html',{'search': search_term,'messages':['SKU Not Found']})
 
     return render(request, 'Search_Sku.html')
 
@@ -227,7 +245,7 @@ def search_ticket_batch(request):
                 x = int(search_term_ticket)
                 x = int(search_term_batch)
             except:
-                return render(request, 'Search_Ticket_Batch.html', {'search': search_term_ticket, 'batch_search': search_term_batch, 'messages': ['field is empty']})
+                return render(request, 'Search_Ticket_Batch.html', {'search': search_term_ticket, 'batch_search': search_term_batch, 'messages': ['Field is Empty']})
 
             articles = Sheet.objects.all().filter(ticketname=search_term_ticket, batchNumber=search_term_batch)
             try:
@@ -242,6 +260,9 @@ def search_ticket_batch(request):
                  'Uploader_Name': upname, 'Uploaded_Date': article.UploadedDate.date(),
                  'Uploaded_Time': article.UploadedDate.time(),
                  'SKU_Count': int(translation)}
+        if len(articles)==0:
+            return render(request, 'Search_Ticket_Batch.html',
+                          {'messages':['Ticket & Batch Not Found'],'search': search_term_ticket, 'batch_search': search_term_batch, 'articles': f})
 
         return render(request, 'Search_Ticket_Batch.html',
                           {'search': search_term_ticket, 'batch_search': search_term_batch, 'articles': f})
@@ -249,6 +270,14 @@ def search_ticket_batch(request):
         if 'search' in request.GET:
             search_term_ticket = request.GET['search']
             search_term_batch = request.GET['batch_search']
+            try:
+                x = int(search_term_ticket)
+                x = int(search_term_batch)
+            except:
+                return render(request, 'Search_Ticket_Batch.html',
+                              {'search': search_term_ticket, 'batch_search': search_term_batch,
+                               'messages': ['Field is Empty']})
+
             try:
                 articles = Sheet.objects.all().filter(ticketname=search_term_ticket, batchNumber=search_term_batch)
             except:
@@ -262,7 +291,7 @@ def search_ticket_batch(request):
                 writer.writerow(item)
             response['Content-Disposition'] = 'attachment; filename=Ticket-'+str(search_term_ticket)+'-Batch-'+str(search_term_batch)+'.csv'
             return response
-        return render(request, 'Search_Ticket_Batch.html',{'messages':['SKU Not Found']})
+        return render(request, 'Search_Ticket_Batch.html',{'search': search_term_ticket, 'batch_search': search_term_batch,'messages':['Ticket & Batch Not Found']})
 
 
     return render(request, 'Search_Ticket_Batch.html')
@@ -467,10 +496,24 @@ def user_profile(request):
 #         return redirect('index')
 #
 def dashboard(request):
+    if 'from_date' not in request.GET or request.GET['from_date'] == '':
+        fromdate = '2000-01-01T00:00'
+        searchfrom=''
+    else:
+        fromdate = '-'.join(request.GET['from_date'].split('/'))
+        searchfrom = '-'.join(request.GET['from_date'].split('/'))
+
+    if 'to_date' not in request.GET or request.GET['to_date'] == '':
+        todate = '2050-01-01T00:00'
+        searchto=''
+    else:
+        todate = '-'.join(request.GET['to_date'].split('/'))
+        searchto = '-'.join(request.GET['to_date'].split('/'))
+
     user = request.user
-    creation = Data_Field.objects.all().filter(Creatorid=user).count()
-    quality = Data_Field.objects.all().filter(Qualityid=user).count()
-    rejection = Data_Field.objects.all().filter(Creatorid=user, isRejected=True).count()
+    creation = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
+    quality = Data_Field.objects.all().filter(Qualityid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate).count()
+    rejection = Data_Field.objects.all().filter(Creatorid=user,Sheetid__MajentoDate__gte=fromdate,Sheetid__MajentoDate__lte=todate ,isRejected=True).count()
     try:
         rejection_percentage = round((rejection / quality) * 100,2)
     except:
@@ -478,7 +521,7 @@ def dashboard(request):
 
 
 
-    return render(request,'dashboard.html',{'creation':creation,'quality':quality,'rejection':rejection,'rejection_percentage':rejection_percentage})
+    return render(request,'dashboard.html',{'searchfrom':searchfrom,'searchto':searchto,'creation':creation,'quality':quality,'rejection':rejection,'rejection_percentage':rejection_percentage})
 
 # class user_profile(UpdateView):
 #     form_class = User
@@ -500,7 +543,7 @@ def checking_found_api(request):
     if request.method == 'POST':
         sku_dataframe = pd.read_csv(request.FILES['sheet_url'])
         arr = sku_dataframe[
-            ['sku', 'store_view_code', 'creatorid', 'qualityid', 'isrejected']].values.tolist()
+            ['sku', 'store_view_code', 'creatorid', 'qualityid', 'r_id']].values.tolist()
         skufoundlist, skunanlist, creatornotfoundlist, qualitynotfoundlist, isrejectednotfoundlist = ([] for _ in range(5))
         skufound = skunan = creatornotfound = qualitynotfound = isrejectednotfound = False
         # print(arr)

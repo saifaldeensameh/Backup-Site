@@ -112,7 +112,7 @@
               <!-- <li class="nav-item"> <a class="nav-link" href="pages/samples/login-2.html"> Login 2 </a></li> -->
               <!-- <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li> -->
               <!-- <li class="nav-item"> <a class="nav-link" href="pages/samples/register-2.html"> Register 2 </a></li> -->
-              <li><a class="nav-link" href="pages/samples/lock-screen.html"><i class="fas fa-lock"style=" font-weight: 400;"> Lockscreen </i></a></li>
+<!--              <li><a class="nav-link" href="pages/samples/lock-screen.html"><i class="fas fa-lock"style=" font-weight: 400;"> Lockscreen </i></a></li>-->
             </ul>
 
           </div>
@@ -123,11 +123,11 @@
             <span class="menu-title" style="color:#0e001a;">Upload</span>
           </a>
         </li>
-        {% if user.is_staff == True%}
+
         <li class="nav-item">
           <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-            <i class="mdi mdi-download menu-icon"></i>
-            <span class="menu-title">Download</span>
+            <i class="mdi mdi-magnify menu-icon"></i>
+            <span class="menu-title">Search</span>
             <i class="menu-arrow"></i>
           </a>
           <div class="collapse" id="ui-basic">
@@ -137,6 +137,7 @@
             </ul>
           </div>
         </li>
+        {% if user.is_staff == True%}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'all_sheets' %}">
             <i class="mdi mdi-table-edit menu-icon"  style="color:#0e001a;"></i>
@@ -197,7 +198,7 @@
       <!-- partial:partials/_footer.html -->
       <footer class="footer" style="background-color: #0e001a;">
         <div class="d-sm-flex justify-content-center justify-content-sm-between">
-          <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <a href="https://www.btech.com/" target="_blank">btech.com </a>2021</span>
+          <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <a href="https://www.btech.com/" target="_blank">Seif ElDeen (u know) </a>2022</span>
         </div>
       </footer>
       <!-- partial -->
@@ -262,7 +263,14 @@
          });
       </script>
 
-
+<script type= "text/javascript">
+         $(function () {
+             $('#datetimepicker_from_dashboard').datetimepicker();
+         });
+         $(function () {
+             $('#datetimepicker_to_dashboard').datetimepicker();
+         });
+      </script>
 <!--  <script type="text/javascript">-->
 <!--    $(document).ready(function() {-->
 <!--        $('#example-enableFiltering-includeSelectAllOption').multiselect({-->
