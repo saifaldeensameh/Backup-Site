@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+ {%block export%}
+                  <button class="btn   btn-icon-text" name = 'export_btn' style="background:#f24d18;color:white" type="submit" form="search_batch_form">
+                      Export
+                  <i class="mdi mdi-printer btn-icon-append"></i>
+                  </button>
+                            {%endblock%}
+
+{% block content %}
+
+
+ <div class="card">
+            <div class="card-body">
+                <form class="form-inline my-2 my-lg-0" id="search_batch_form" autocomplete="off">
+            <div class="col-md-3 ">
+                <label class="form-label">Majento ID</label>
+                <select id="multiple-checkboxes" multiple="multiple" name="majento_id">
+                    {%for d in data%}
+                        <option value="{{d}}" {%if d.username in searchname%} selected   {%endif%}>{{d}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" >From Date</label>
+                <input type="text" class="form-control" name="from_date" id="datetimepicker_fromdate"  value="{{searchfrom}}"\>
+
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" >To Date</label>
+              <input type="text" class="form-control" name="to_date" id="datetimepicker_todate"  value="{{searchto}}">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-secondary " name = 'search_btn' type="submit">
+                <i class="    mdi mdi-magnify btn-icon-append"></i>
+                    Search
+                </button>
+            </div>
+<!--              hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh-->
+                </form>
+            </div>
+ </div>
+
+
+
+
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>Username</th>
+        <th>Creation</th>
+        <th>Quality</th>
+        <th>Rejection</th>
+        <th>Rejection Percentage</th>
+<!--        <th>Uploader Date</th>-->
+    </tr>
+    </thead>
+    <tbody>
+    {% for person in persons%}
+    <tr>
+        <td>{{person.user}}</td>
+        <td>{{person.create}}</td>
+        <td>{{person.quality}} </td>
+        <td>{{person.rejection}}</td>
+        <td>{{person.percentage}}%</td>
+<!--        <small class="text-muted d-block">{{board.description}}</small>-->
+<!--        </td>-->
+<!--        <td>{{sheet.batchNumber}}</td>-->
+<!--        <td>{{sheet.Majentoid.username}}</td>-->
+<!--        <td>{{sheet.MajentoDate.date}}</td>-->
+<!--        <td>{{sheet.Uploaderid.username}}</td>-->
+<!--        <td>{{sheet.UploadedDate.date}}</td>-->
+    </tr>
+    {%endfor%}
+
+<!--    delete once you know how to make it open down the multiple selection-->
+<!--    {%for d in data%}-->
+<!--    <tr>-->
+<!--    <td>{{person.user}}</td>-->
+<!--        <td>{{person.create}}</td>-->
+<!--        <td>{{person.quality}} </td>-->
+<!--        <td>{{person.rejection}}</td>-->
+<!--        <td>{{person.percentage}}</td>-->
+<!--    </tr>-->
+<!--    {%endfor%}-->
+
+    </tbody>
+</table>
+
+{% endblock %}

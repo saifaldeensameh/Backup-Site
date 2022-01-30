@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'uploading_data',
     'accounts',
+    'rest_framework',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +81,7 @@ WSGI_APPLICATION = 'backend1.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Btech-backup-backend',
+        'NAME': 'Btech-backup',
         'USER':'postgres',
         'PASSWORD':'wowtesting1234567890',
         'HOST':'localhost',
@@ -130,5 +132,5 @@ STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGOUT_REDIRECT_URL = 'login'
-LOGIN_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'

@@ -1,47 +1,116 @@
 {% extends 'base.html' %}
-{% block title%} Upload Page {% endblock%}
 
 
     {%block head_scripts%}
-  <script>
-  $( function() {
-    $( "#dialog" ).dialog({
-      resizable: true,
-      height: "auto",
-      width: "auto",
-      modal: true,
 
-    });
-  } );
-  </script>
+<!--  <script>-->
+<!--  $( function() {-->
+<!--    $( "#dialog" ).dialog({-->
+<!--      resizable: true,-->
+<!--      height: "auto",-->
+<!--      width: "auto",-->
+<!--      modal: true,-->
+
+<!--    });-->
+<!--  } );-->
+<!--  </script>-->
+
     {% endblock %}
 
 
-
-{% block breadcrumb %}
-  <li class="breadcrumb-item active">Upload</li>
-{% endblock %}
-
 {% block content%}
-<form method="post" novalidate enctype="multipart/form-data" data-ajax="false">
-    {% csrf_token %}
-    {% include 'includes/form.html' %}
+<!--<form method="post" novalidate enctype="multipart/form-data" >-->
+<!--    {% csrf_token %}-->
+<!--    {% include 'includes/form.html' %}-->
 <!--    <button type="submit" name = 'Upload_Btn' class="btn btn-primary ">Upload</button>-->
-    <button type="submit"  name = 'Check_Files_Btn' class="btn btn-primary ">Check Files</button>
-    </form>
 
-{% if messages %}{% for message in messages %}
+<!--                  <div class="input-group mb-3">-->
+<!--                   <span class="input-group-text" style="background:#f24d18;color:white">SKU</span>-->
+<!--                    <input type="file" class = 'form-control' placeholder="Search" aria-label="Search" name="search" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search2" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search3" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search4" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search5" value="{{search}}" >-->
+<!--                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search6" value="{{search}}" >-->
 
-<div id="dialog" title="Error in Sheet" >
-<!--    <span class="ui-icon ui-icon-alert " style="float:left; margin:12px 12px 20px 0;"></span>-->
+
+
+
+<!--                    <div class="input-group-append">-->
+<!--                      <button class="btn btn-outline-secondary" name = 'search_btn' type="submit">Search</button>-->
+<!--                    </div>-->
+
+<!--                  </div>-->
+<!--                           </form>-->
+
+{% if messages %}
+<div class="alert alert-danger" id="dialog" title="Error in Sheet" xmlns="http://www.w3.org/1999/html">
+{% for message in messages %}
 
   <p class="text-danger">{{message}}</p>
 
-    </div>
 {% endfor %}
+</div>
+
 {% endif %}
 
+          <div class="card">
+            <div class="card-body">
+          <form class="row g-3 needs-validation" method="post" enctype="multipart/form-data" autocomplete="off">
+              {%csrf_token%}
+            <div class="col-md-4 custom-file">
+              <label class="form-label">File</label>
+              <input class="form-control" type="file" value="File Url" name = 'sheeturl' required>
+            </div>
+            <div class="col-md-4">
+              <label for="validationCustom02" class="form-label" >Ticket No.</label>
+              <input type="number" class="form-control" id="validationCustom023"  name="ticketname" required>
+            </div>
+            <div class="col-md-4">
+              <label for="validationCustom02" class="form-label">Batch No.</label>
+              <input type="number" class="form-control" id="validationCustom02"  name="batchNumber" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Majento ID</label>
+             <select class="form-select" name="Majentoid" required>
+             {%for d in data%}
+                 <option value="{{d}}">{{d}}</option>
+              {%endfor%}
+
+             </select>
+            </div>
+<!--              hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh-->
+            <div class="col-md-6">
+              <label class="form-label" >Majento Date</label>
+              <input type="text" class="form-control" name="MajentoDate" id="datetimepicker4" required>
+            </div>
 
 
+
+
+
+
+
+<!--              hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh-->
+            <div class="col-12">
+              <button class="btn" name = "upload_btn" type="submit" style="background-color:#F24D18">Submit form</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+{%endblock%}
+    {%block scripts%}
+     <script type= "text/javascript">
+         $(function () {
+             $('#datetimepicker4').datetimepicker();
+         });
+      </script>
+
+<!--     <script type="text/javascript">-->
+<!--         $(function () {-->
+<!--             $('#datetimepicker4').datetimepicker();-->
+<!--         });-->
+<!--      </script>-->
 {%endblock%}
 

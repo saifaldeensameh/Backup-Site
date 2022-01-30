@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block content%}
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th>Ticket Number</th>
+        <th>Batch Number</th>
+        <th>Majento Name</th>
+        <th>Majento Date</th>
+        <th>Uploader Name</th>
+        <th>Uploader Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+
+        <td>{{sheet.ticketname}}
+<!--        <small class="text-muted d-block">{{board.description}}</small>-->
+        </td>
+        <td>{{sheet.batchNumber}}</td>
+        <td>{{sheet.Majentoid.username}}</td>
+        <td>{{sheet.MajentoDate.date}}</td>
+        <td>{{sheet.Uploaderid.username}}</td>
+        <td>{{sheet.UploadedDate.date}}</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<form method="post" novalidate enctype="multipart/form-data" data-ajax="false">
+              {% csrf_token %}
+              {% include 'includes/form.html' %}
+              <button type="submit" class="btn btn-block" name="upload_btn" style="background:#f24d18;color:white">Save Changes</button>
+            </form>
+{%endblock%}
+

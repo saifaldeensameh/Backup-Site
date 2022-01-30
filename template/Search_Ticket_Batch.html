@@ -1,35 +1,63 @@
 {% extends 'base.html' %}
-{% block title %}Upload successful{% endblock %}
+ {%block export%}
 
-{% block breadcrumb %}
-  <li class="breadcrumb-item "><a href="{%url 'index'%}">Upload</a> </li>
-
-  <li class="breadcrumb-item active">Success</li>
-{% endblock %}
+                  <button class="btn   btn-icon-text" name = 'export_btn' style="background:#f24d18;color:white" type="submit" form="search_batch_form">
+                      Export
+                  <i class="mdi mdi-printer btn-icon-append"></i>
+                  </button>
+                            {%endblock%}
 
 {% block content %}
-    <form class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2" type="number" placeholder="Ticket Numbet" aria-label="Search" name="search" >
-    <input class="form-control mr-sm-2" type="number" placeholder="Batch Number" aria-label="Search2" name="batch_search" >
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+{% if messages %}
+<div class="alert alert-danger" id="dialog" title="Error in Sheet" >
+{% for message in messages %}
+
+  <p class="text-danger">{{message}}</p>
+
+{% endfor %}
+</div>
+
+{% endif %}
 
 
+    <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title" style="color: #f24d18;">Search Ticket & Batch</h4>
+
+    <form class="form-inline my-2 my-lg-0" id="search_batch_form">
+                  <div class="input-group col-lg-12" style="margin:1% 0">
+        <span class="input-group-text" style="background:#f24d18;color:white">Ticket</span>
+        <input class="form-control " type="number" placeholder="Ticket Number" aria-label="Search" name="search" value="{{search}}">
+        <span class="input-group-text " style="background:#f24d18;color:white">Batch</span>
+        <input class="form-control " type="number" placeholder="Batch Number" aria-label="Search2" name="batch_search" value="{{batch_search}}">
+         <button class="btn btn-outline-secondary" name = 'search_btn' type="submit">
+         <i class="    mdi mdi-magnify btn-icon-append"></i>
+         Search
+         </button>
+    </div>
     </form>
-
+  <div class="table-responsive">
 {%if articles%}
-  {% for article in articles %}
-    <p> {{article.ticketname}} </p>
-    <p> {{article.batchNumber}} </p>
-    <p> {{article.Majentoid}} </p>
-    <p> {{article.Uploaderid}} </p>
-    <p> {{article.MajentoDate}} </p>
-    <p> {{article.UploadedDate}} </p>
-<!--    <p> {{article.ticketname.SKU}} </p>-->
+  <table class="table table-striped ">
+      <tbody>
+{% for article,y in articles.items %}
+    <tr>
+      <th>{{article}}</th>
+      <td>{{y}}</td>
+    </tr>
     {% endfor %}
-
-
-    <p>{{translation}}</p>
-
-    {% endif %}
-
+  </tbody>
+</table>
+{% endif %}
+               </div>
+              </div>
+            </div>
+ </div>
 {% endblock %}
+
+
+
+
+
+

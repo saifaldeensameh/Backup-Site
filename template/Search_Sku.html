@@ -1,45 +1,59 @@
 {% extends 'base.html' %}
-{% block title %}Upload successful{% endblock %}
 
-{% block breadcrumb %}
-  <li class="breadcrumb-item "><a href="{%url 'index'%}">Upload</a> </li>
+{%block export%}
 
-  <li class="breadcrumb-item active">Success</li>
-{% endblock %}
+
+<button class="btn btn-icon-text" name = 'export_btn' style="background:#f24d18;color:white" type="submit" form="search_sku_form">
+                      Export <i class="mdi mdi-printer btn-icon-append"></i></button>
+{%endblock%}
 
 {% block content %}
-    <form class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
+{% if messages %}
+<div class="alert alert-danger" id="dialog" title="Error in Sheet" >
+{% for message in messages %}
 
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  <p class="text-danger">{{message}}</p>
 
+{% endfor %}
+</div>
 
-    </form>
-  {%if articles%}
-  {% for article in articles %}
+{% endif %}
 
-    <p> {{article.SKU}} </p>
-    <p> {{article.Creatorid}} </p>
-    <p> {{article.Qualityid}} </p>
-    <p> {{article.isRejected}} </p>
-    <p> {{article.Sheetid.ticketname}} </p>
-    <p> {{article.Sheetid.batchNumber}} </p>
-    <p> {{article.Sheetid.Majentoid}} </p>
-    <p> {{article.Sheetid.Uploaderid}} </p>
-    <p> {{article.Sheetid.MajentoDate}} </p>
-    <p> {{article.Sheetid.UploadedDate}} </p>
+   <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title" style="color: #f24d18;">Search by SKU</h4>
+<!--                <p class="card-description">-->
+                  <!-- Add class <code>.table-striped</code> -->
+                  <!-- <input type="search" /> -->
+                      <form class="form-inline my-2 my-lg-0" id="search_sku_form">
 
-<!--    <p> {{article.Creatorid}} </p>-->
+                  <div class="input-group col-lg-12" style="margin:1% 0">
+                   <span class="input-group-text" style="background:#f24d18;color:white">SKU</span>
+                    <input type="search" class = 'form-control' placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" name = 'search_btn' type="submit">Search</button>
+                    </div>
 
-<!--    <p> {{article.Creatorid}} </p>-->
+                  </div>
+                           </form>
+                <div class="table-responsive">
 
-
+{%if articles%}
+  <table class="table table-striped ">
+      <tbody>
+{% for article,y in articles.items %}
+    <tr>
+      <th>{{article}}</th>
+      <td>{{y}}</td>
+    </tr>
     {% endfor %}
-  {% for trans in translation %}
+  </tbody>
+</table>
+{% endif %}
+                </div>
+              </div>
+            </div>
+ </div>
 
-     <p> {{trans.Creatorid}} </p>
-    <p> {{trans.Qualityid}} </p>
-    <p> {{trans.isRejected}} </p>
-    {% endfor %}
-{%endif%}
 {% endblock %}

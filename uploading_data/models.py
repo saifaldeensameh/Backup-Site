@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Sheet (models.Model):
     Majentoid = models.ForeignKey(User, related_name='majentoname', on_delete=models.CASCADE)
     Uploaderid = models.ForeignKey(User, related_name='uploadername', on_delete=models.CASCADE)
-    sheeturl = models.FileField(upload_to='Files/',unique=True)
+    sheeturl = models.FileField(upload_to='Files/')
     ticketname = models.IntegerField()
     batchNumber = models.IntegerField()
     MajentoDate = models.DateTimeField()

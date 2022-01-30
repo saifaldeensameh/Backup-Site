@@ -1,75 +1,306 @@
 {% load static%}
 <html lang="en">
+
+
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{%endblock%}</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/jquery_ui.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{%static 'js/jquery.min.js'%}"></script>
-    <script src="{%static 'js/bootstrap.min.js'%}"></script>
-    <script src="{%static 'js/jquery_ui.js'%}"></script>
+  <!-- Required meta tags -->
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>B-Tech Admin</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/base/vendor.bundle.base.css' %}">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+<!--  <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">-->
+  <!-- End plugin css for this page -->
+  <!--font-awesome-->
+  <link rel="stylesheet" type="text/css" href="{% static 'fontawesome-pro/css/fontawesome.css' %}" />
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">-->
 
-<!--script for checking the popup-->
+  <link rel="stylesheet" href="{% static 'css/data-table.css' %}" />
 
+  <link rel="shortcut icon" href="{% static 'images/btechlogo.png' %}" />
+  <link rel="stylesheet" href="{% static 'css/style2.css' %}">
 
+  <style>
+  span.multiselect-native-select{position:relative}span.multiselect-native-select select{border:0!important;clip:rect(0 0 0 0)!important;height:1px!important;margin:-1px -1px -1px -3px!important;overflow:hidden!important;padding:0!important;position:absolute!important;width:1px!important;left:50%;top:30px}.multiselect-container{position:absolute;list-style-type:none;margin:0;padding:0}.multiselect-container .input-group{margin:5px}.multiselect-container .multiselect-reset .input-group{width:93%}.multiselect-container>li{padding:0}.multiselect-container>li>a.multiselect-all label{font-weight:700}.multiselect-container>li.multiselect-group label{margin:0;padding:3px 20px;height:100%;font-weight:700}.multiselect-container>li.multiselect-group-clickable label{cursor:pointer}.multiselect-container>li>a{padding:0}.multiselect-container>li>a>label{margin:0;height:100%;cursor:pointer;font-weight:400;padding:3px 20px 3px 40px}.multiselect-container>li>a>label.checkbox,.multiselect-container>li>a>label.radio{margin:0}.multiselect-container>li>a>label>input[type=checkbox]{margin-bottom:5px}.btn-group>.btn-group:nth-child(2)>.multiselect.btn{border-top-left-radius:4px;border-bottom-left-radius:4px}.form-inline .multiselect-container label.checkbox,.form-inline .multiselect-container label.radio{padding:3px 20px 3px 40px}.form-inline .multiselect-container li a label.checkbox input[type=checkbox],.form-inline .multiselect-container li a label.radio input[type=radio]{margin-left:-20px;margin-right:0}
+</style>
+
+  <!-- endinject -->
     {%block head_scripts%}
-
     {% endblock %}
 
 </head>
 
 <body>
-
-<div class ="container">
-
 {%block body%}
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'index' %}">Seif Backup</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
 
-    <div class="collapse navbar-collapse" id="mainMenu">
-      {%if user.is_authenticated%}
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Welcome  {{ user.username }}
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-            <a class="dropdown-item" href="{%url 'signup'%}">My account</a>
-            <a class="dropdown-item" href="{%url 'password_change'%}">Change password</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+<button type="submit"  name = 'Check_Files_Btn' class="btn btn-primary ">Check Files</button>
+<div class="container-scroller">
+  <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <div class="navbar-brand-wrapper d-flex justify-content-center">
+      <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+        <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><img src="{% static 'images/logo.png' %}" alt="logo" style="width: calc(186px - 128px);max-width:100%;height: 62px;margin: auto;vertical-align: middle;"/></a>
+        <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}"><img src="{% static 'images/btechlogo.png' %}" alt="logo"/></a>
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="mdi mdi-sort-variant"></span>
+        </button>
+      </div>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+      <ul class="navbar-nav mr-lg-4 w-100">
+        <li class="nav-item nav-search d-none d-lg-block w-100">
+          <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="search">
+                  <i class="mdi mdi-magnify"></i>
+                </span>
+            </div>
+            <input type="text" class="form-control" placeholder="Search now" aria-label="search" aria-describedby="search">
           </div>
         </li>
       </ul>
-        {%else%}
-        <form class="form-inline ml-auto">
-        <a href="{%url 'login'%}" class="btn btn-outline-secondary">login</a>
-        <a href="{%url 'signup'%}" class="btn btn-primary ml-2">Signup</a>
-        </form>
-            {%endif%}
-
+      <ul class="navbar-nav navbar-nav-right">
+        <li class="nav-item nav-profile dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+            <img src="{% static 'images//faces/face5.jpg' %}" alt="profile"/>
+            <span class="nav-profile-name">{{user.first_name}} {{user.last_name}}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+            <a class="dropdown-item" href="{% url 'user_profile'%}">
+              <i class="mdi mdi-account menu-icon"></i>
+              Profile
+            </a>
+            <a class="dropdown-item" href="{% url 'logout' %}">
+              <i class="mdi mdi-logout"></i>
+              Logout
+            </a>
+          </div>
+        </li>
+      </ul>
+      <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+        <span class="mdi mdi-menu"></span>
+      </button>
     </div>
+  </nav>
+  <!-- partial -->
+  <div class="container-fluid page-body-wrapper"style="padding:0">
+    <!-- partial:partials/_sidebar.html -->
+    <nav class="sidebar sidebar-offcanvas" id="sidebar" style="background-color: #faf7fd;">
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'dashboard' %}">
+            <i class="mdi mdi-home menu-icon"  style="color:#0e001a;"></i>
+            <span class="menu-title" style="color:#0e001a;">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+            <i class="mdi mdi-account menu-icon"></i>
+            <span class="menu-title">User Pages</span>
+            <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse" id="auth">
+            <ul class="nav flex-column sub-menu">
+              <li><a class="nav-link" href="{% url 'user_profile'%}"><i class="fa fa-user"style=" font-weight: 400;"> Profile</i></a></li>
+              <!-- <li class="nav-item"> <a class="nav-link" href="pages/samples/login-2.html"> Login 2 </a></li> -->
+              <!-- <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li> -->
+              <!-- <li class="nav-item"> <a class="nav-link" href="pages/samples/register-2.html"> Register 2 </a></li> -->
+<!--              <li><a class="nav-link" href="pages/samples/lock-screen.html"><i class="fas fa-lock"style=" font-weight: 400;"> Lockscreen </i></a></li>-->
+            </ul>
+
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'index' %}">
+            <i class="mdi mdi-upload menu-icon"  style="color:#0e001a;"></i>
+            <span class="menu-title" style="color:#0e001a;">Upload</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <i class="mdi mdi-magnify menu-icon"></i>
+            <span class="menu-title">Search</span>
+            <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse" id="ui-basic">
+            <ul class="nav flex-column sub-menu">
+              <li> <a class="nav-link" href="{% url 'search_sku' %}"><i class="fas fa-search"style=" font-weight: 400;"> Search by SKU</i></a></li>
+              <li> <a class="nav-link" href="{% url 'search_batch' %}"><i class="fas fa-search"style=" font-weight: 400;"> Search by Ticket&Batch No</i></a></li>
+            </ul>
+          </div>
+        </li>
+        {% if user.is_staff == True%}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'all_sheets' %}">
+            <i class="mdi mdi-table-edit menu-icon"  style="color:#0e001a;"></i>
+            <span class="menu-title" style="color:#0e001a;">Edit</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'all_users' %}">
+            <i class="mdi mdi-table-edit menu-icon"  style="color:#0e001a;"></i>
+            <span class="menu-title" style="color:#0e001a;">Report</span>
+          </a>
+        </li>
+        {%endif%}
+      </ul>
+    </nav>
+    <!-- partial -->
+    <div class="main-panel">
+      <div class="content-wrapper" style="background-color: #faf7fd;">
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex justify-content-between flex-wrap pt-2">
+              <div class="d-flex align-items-end flex-wrap">
+                <div class="me-md-3 me-xl-5"  style="color: #f24d18;">
+                  <h2>Welcome back, {{ user.first_name }}</h2>
+                  <p class="mb-md-0">Your B-Tech dashboard.</p>
+                </div>
+
+              </div>
+              <div class="d-flex justify-content-between align-items-end flex-wrap">
+
+                {%block export%}
+
+                {%endblock%}
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+
+
+        <div class="row">
+
+          {%block content%}
+
+          {%endblock%}
+        </div>
+
+
+        <div class="row">
+
+        </div>
+        <div class="row">
+
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+      <!-- partial:partials/_footer.html -->
+      <footer class="footer" style="background-color: #0e001a;">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+          <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <a href="https://www.btech.com/" target="_blank">Seif ElDeen (u know) </a>2022</span>
+        </div>
+      </footer>
+      <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
   </div>
-</nav>
-    <ol class="breadcrumb my-4">
-{% block breadcrumb%}
-{% endblock%}
-</ol>
-
-    {%block content%}
-
-    {%endblock%}
+  <!-- page-body-wrapper ends -->
 </div>
-
-{% endblock %}
-
+<!-- container-scroller -->
 
 
 
+
+<!-- plugins:js -->
+<script src="{% static 'vendors/base/vendor.bundle.base.js' %}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'vendors/datatables.net/jquery.dataTables.js' %}"></script>
+<script src="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.js'%}"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{% static 'js/off-canvas.js' %}"></script>
+<script src="{% static 'js/hoverable-collapse.js' %}"></script>
+
+<script src="{% static 'js/template.js' %}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script src="{% static 'js/data-table.js' %}"></script>
+<script src="{% static 'js/jquery.dataTables.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap4.js' %}"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-multiselect.js' %}"></script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>-->
+
+
+
+
+
+
+
+<script src="{% static 'js/jquery.cookie.js' %}" type="text/javascript"></script>
+<script type= "text/javascript">
+         $(function () {
+             $('#datetimepicker4').datetimepicker();
+         });
+      </script>
+<!--    datetime picker for report-->
+<script type= "text/javascript">
+         $(function () {
+             $('#datetimepicker_fromdate').datetimepicker();
+         });
+      </script>
+<script type= "text/javascript">
+         $(function () {
+             $('#datetimepicker_todate').datetimepicker();
+         });
+      </script>
+
+<script type= "text/javascript">
+         $(function () {
+             $('#datetimepicker_from_dashboard').datetimepicker();
+         });
+         $(function () {
+             $('#datetimepicker_to_dashboard').datetimepicker();
+         });
+      </script>
+<!--  <script type="text/javascript">-->
+<!--    $(document).ready(function() {-->
+<!--        $('#example-enableFiltering-includeSelectAllOption').multiselect({-->
+<!--            includeSelectAllOption: true,-->
+<!--            enableFiltering: true-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+<script type="text/javascript">
+        $(document).ready(function() {
+        $('#multiple-checkboxes').multiselect({
+          includeSelectAllOption: true,
+<!--          enableFiltering: true-->
+        });
+    });
+    </script>
+<!--</script>-->
+
+<!-- End custom js for this page-->
+{%block script%}
+
+
+
+{%endblock %}
+
+<!-- container-scroller -->
+{%endblock %}
 </body>
+
+
+
 </html>
+
