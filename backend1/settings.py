@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-import django_heroku
+import dj_database_url
+# import django_heroku
 import os.path
 from pathlib import Path
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'uploading_data',
     'accounts',
+    'corsheaders',
     'rest_framework',
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -49,13 +51,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'backend1.urls'
 
 TEMPLATES = [
@@ -90,6 +93,12 @@ DATABASES = {
         'PORT':'5432',
     }
 }
+
+db_from_env=dj_database_url.config()
+DATABASES['default'].update(db_from_env)
+
+
+
 
 
 # Password validation
@@ -140,4 +149,4 @@ LOGOUT_REDIRECT_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
