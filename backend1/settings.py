@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'uploading_data',
     'accounts',
-    'corsheaders',
+    # 'corsheaders',
     'rest_framework',
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorseMiddleware',
+    # 'corsheaders.middleware.CorseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
