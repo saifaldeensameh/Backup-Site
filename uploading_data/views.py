@@ -162,7 +162,7 @@ def saving_sku(file, ticketname, batchnumber):
     sku_dataframe = pd.read_csv(file)
     sku_dataframe = sku_dataframe[['sku', 'store_view_code', 'creatorid', 'qualityid', 'r_id']].values.tolist()
     for item in sku_dataframe:
-        sku = item[0]
+        sku = str(item[0])
         if str(item[1]) == 'ar':
             sku += '_ar'
         data = Data_Field()
